@@ -39,7 +39,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    * @param move The move to apply to the game
    * @throws InvalidParametersError if the move is invalid (with specific message noted above)
    */
-  public applyMove(move: GameMove<TicTacToeMove>): void {}
+  public applyMove(move: GameMove<TicTacToeMove>): void {
+    // move validation
+    // this.state.moves.push(move) -> doesn't work b/c readonly
+    // make a private helper method validateMove()
+    // make another private helper method checkForWin()
+  }
 
   /**
    * Adds a player to the game.

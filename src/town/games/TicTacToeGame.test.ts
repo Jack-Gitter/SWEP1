@@ -26,7 +26,7 @@ describe('TicTacToeGame', () => {
         expect(game.state.status).toEqual('WAITING_TO_START');
         expect(game.state.winner).toBeUndefined();
       });
-      it('makes the second player O and initializes the stae with status IN_PROGRESS', () => {
+      it('makes the second player O and initializes the state with status IN_PROGRESS', () => {
         const player1 = createPlayerForTesting();
         const player2 = createPlayerForTesting();
 
