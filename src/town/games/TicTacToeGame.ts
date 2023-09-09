@@ -1,5 +1,8 @@
 import InvalidParametersError, {
+  BOARD_POSITION_NOT_EMPTY_MESSAGE,
   GAME_FULL_MESSAGE,
+  GAME_NOT_IN_PROGRESS_MESSAGE,
+  MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../lib/InvalidParametersError';
@@ -39,11 +42,101 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    * @param move The move to apply to the game
    * @throws InvalidParametersError if the move is invalid (with specific message noted above)
    */
+  private _moveIsValid(move: TicTacToeMove, moves: ReadonlyArray<TicTacToeMove>): boolean {
+    // check for game is not in progress
+    if (this.state.status !== 'IN_PROGRESS') {
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+    }
+    // check for space not occupied
+    moves.forEach(m => {
+      if (m.col === move.col && m.row === move.row) {
+        throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+      }
+    });
+    // check for move not players turn
+    if (this.state.moves.length === 0 && move.gamePiece === 'O') {
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
+    }
+    if (
+      this.state.moves.length > 0 &&
+      move.gamePiece === this.state.moves[this.state.moves.length - 1].gamePiece
+    ) {
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
+    }
+    return true;
+  }
+
+  private _playerHasWon(moves: ReadonlyArray<TicTacToeMove>): boolean {
+    // check horizontal and vertical wins
+    let topLeftDiagonals = [];
+    let topRightDiagonals = [];
+    for (let i = 0; i < moves.length; i++) {
+      let countInRow = 1;
+      let countInColumn = 1;
+      if (moves[i].col === moves[i].row) {
+        if (
+          topLeftDiagonals.length > 0 &&
+          topLeftDiagonals[topLeftDiagonals.length - 1] !== moves[i].gamePiece
+        ) {
+          topLeftDiagonals = [];
+        } else {
+          topLeftDiagonals.push(moves[i].gamePiece);
+        }
+      }
+      if (moves[i].col + moves[i].row === 2) {
+        if (
+          topRightDiagonals.length > 0 &&
+          topRightDiagonals[topRightDiagonals.length - 1] !== moves[i].gamePiece
+        ) {
+          topRightDiagonals = [];
+        } else {
+          topRightDiagonals.push(moves[i].gamePiece);
+        }
+      }
+      for (let j = i + 1; j < moves.length; j++) {
+        if (moves[j].col === moves[i].col && moves[j].gamePiece === moves[i].gamePiece) {
+          countInColumn += 1;
+        }
+        if (moves[j].row === moves[i].row && moves[j].gamePiece === moves[i].gamePiece) {
+          countInRow += 1;
+        }
+      }
+      if (
+        countInRow === 3 ||
+        countInColumn === 3 ||
+        topLeftDiagonals.length === 3 ||
+        topRightDiagonals.length === 3
+      ) {
+        return true;
+      }
+    }
+    // check diagonal wins
+    return false;
+  }
+
+  private _gameHasTied(moves: ReadonlyArray<TicTacToeMove>): boolean {
+    return moves.length === 9;
+  }
+
   public applyMove(move: GameMove<TicTacToeMove>): void {
-    // move validation
-    // this.state.moves.push(move) -> doesn't work b/c readonly
-    // make a private helper method validateMove()
-    // make another private helper method checkForWin()
+    // Assign the correct game piece to the player
+    if (this.state.x === move.playerID) {
+      move.move.gamePiece = 'X';
+    } else {
+      move.move.gamePiece = 'O';
+    }
+
+    // Check for valid moves and wins
+    if (this._moveIsValid(move.move, this.state.moves)) {
+      this.state.moves = this.state.moves.concat(move.move);
+      if (this._playerHasWon(this.state.moves)) {
+        this.state.status = 'OVER';
+        this.state.winner = move.playerID;
+      } else if (this._gameHasTied(this.state.moves)) {
+        this.state.status = 'OVER';
+        this.state.winner = undefined;
+      }
+    }
   }
 
   /**
