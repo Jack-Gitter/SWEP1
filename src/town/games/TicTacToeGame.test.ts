@@ -44,18 +44,6 @@ describe('TicTacToeGame', () => {
         expect(game.state.winner).toBeUndefined();
         expect(game.state.status === 'IN_PROGRESS');
       });
-      describe('if the game status is over', () => {
-        it('should add the player as normal', () => {
-          const player1 = createPlayerForTesting();
-          const player2 = createPlayerForTesting();
-          const player3 = createPlayerForTesting();
-          game.join(player1);
-          game.join(player2);
-          game.leave(player1);
-          game.join(player3);
-          expect(1).toBe(2);
-        });
-      });
     });
     describe('When the player cannot be added', () => {
       it('makes sure the same player cannot join the game twice', () => {
@@ -131,6 +119,35 @@ describe('TicTacToeGame', () => {
 
             expect(game.state.status).toEqual('WAITING_TO_START');
             expect(game.state.x).toEqual(player.id);
+          });
+          test('when someone has won the game', () => {
+            const player1 = createPlayerForTesting();
+            const player2 = createPlayerForTesting();
+
+            game.join(player1);
+            game.join(player2);
+            expect(game.state.x).toEqual(player1.id);
+            expect(game.state.o).toEqual(player2.id);
+            expect(game.state.status).toEqual('IN_PROGRESS');
+
+            const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
+            const move2: TicTacToeMove = { row: 2, col: 2, gamePiece: 'O' };
+            const move3: TicTacToeMove = { row: 1, col: 0, gamePiece: 'X' };
+            const move4: TicTacToeMove = { row: 2, col: 1, gamePiece: 'O' };
+            const move5: TicTacToeMove = { row: 2, col: 0, gamePiece: 'X' };
+
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 });
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 });
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
+
+            expect(game.state.status).toEqual('OVER');
+            expect(game.state.winner).toEqual(player1.id);
+
+            game.leave(player2);
+
+            expect(game.state.status).toEqual('WAITING_TO_START');
           });
         });
       });

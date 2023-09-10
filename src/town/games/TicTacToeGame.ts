@@ -56,7 +56,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
       if (this._playerHasWon(move)) {
         this.state.status = 'OVER';
         this.state.winner = move.playerID;
-      } else if (this._gameHasTied()) {
+      } else if (this.state.moves.length === 9) {
         this.state.status = 'OVER';
         this.state.winner = undefined;
       }
@@ -174,15 +174,6 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
   }
 
   /**
-   * Determines if the tictactoe game is tied (this method occurs after checking for a win)
-   * @returns true if the game is tied, false otherwise
-   */
-
-  private _gameHasTied(): boolean {
-    return this.state.moves.length === 9;
-  }
-
-  /**
    * Adds a player to the game.
    * Updates the game's state to reflect the new player.
    * If the game is now full (has two players), updates the game's state to set the status to IN_PROGRESS.
@@ -223,12 +214,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     if (this._players.indexOf(player) === -1) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
-    if (this._players.length === 1) {
-      this.state.status = 'WAITING_TO_START';
-    } else if (this._players.length === 2) {
+    if (this.state.status === 'IN_PROGRESS') {
       this.state.status = 'OVER';
       this.state.winner =
         this._players[0].id === player.id ? this._players[1].id : this._players[0].id;
+    } else {
+      this.state.status = 'WAITING_TO_START';
     }
   }
 }
