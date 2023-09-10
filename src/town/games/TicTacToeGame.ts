@@ -14,6 +14,7 @@ import Game from './Game';
  * A TicTacToeGame is a Game that implements the rules of Tic Tac Toe.
  * @see https://en.wikipedia.org/wiki/Tic-tac-toe
  */
+
 export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMove> {
   public constructor() {
     super({
@@ -68,6 +69,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    * @throws InvalidParametersError if the move is invalid (specified by the applyMove method)
    * @returns true if the move is valid
    */
+
   private _moveIsValid(move: TicTacToeMove): boolean {
     if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
@@ -95,7 +97,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
 
   /**
    * Determines if a player has won based on the moves that have occured in the game
-   * @returns
+   * @returns true if a player has won the current game, false otherwise
    */
 
   private _playerHasWon(move: GameMove<TicTacToeMove>): boolean {
@@ -105,6 +107,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
       this._checkForDiagonalWins(move)
     );
   }
+
+  /**
+   * Determines if a win has been made on the diagonal of the tictactoe board
+   * @param move the most recent move that has been applied to the game
+   * @returns true if a player has won on either diagonal, false otherwise
+   */
 
   private _checkForDiagonalWins(move: GameMove<TicTacToeMove>): boolean {
     const diagonals: string[][] = [[], []];
@@ -127,6 +135,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     return false;
   }
 
+  /**
+   * Determines if a win has been made on the columns of a tictactoe board
+   * @param move the most recent move that has been applied to the game
+   * @returns true if a win has been made on any column, false otherwise
+   */
+
   private _checkForVerticalWins(move: GameMove<TicTacToeMove>) {
     const ticTacToeBoard: string[][] = [[], [], []];
     for (let i = 0; i < this.state.moves.length; i++) {
@@ -139,6 +153,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     }
     return false;
   }
+
+  /**
+   * Determines if a win has been made on the rows of a tictactoe board
+   * @param move the most recent move that has been applied ot the game
+   * @returns true if a win has been made on any row, false otherwise
+   */
 
   private _checkForHorizontalWins(move: GameMove<TicTacToeMove>): boolean {
     const ticTacToeBoard: string[][] = [[], [], []];
@@ -153,60 +173,10 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     return false;
   }
 
-  /* private _playerHasWon(): boolean {
-    // check horizontal and vertical wins
-    let topLeftDiagonals = [];
-    let topRightDiagonals = [];
-    for (let i = 0; i < this.state.moves.length; i++) {
-      let countInRow = 1;
-      let countInColumn = 1;
-      _checkDiagonals(i, topLeftDiagonals, topRightDiagonals)
-      if (this.state.moves[i].col === this.state.moves[i].row) {
-        if (
-          topLeftDiagonals.length > 0 &&
-          topLeftDiagonals[topLeftDiagonals.length - 1] !== this.state.moves[i].gamePiece
-        ) {
-          topLeftDiagonals = [];
-        } else {
-          topLeftDiagonals.push(this.state.moves[i].gamePiece);
-        }
-      }
-      if (this.state.moves[i].col + this.state.moves[i].row === 2) {
-        if (
-          topRightDiagonals.length > 0 &&
-          topRightDiagonals[topRightDiagonals.length - 1] !== this.state.moves[i].gamePiece
-        ) {
-          topRightDiagonals = [];
-        } else {
-          topRightDiagonals.push(this.state.moves[i].gamePiece);
-        }
-      }
-      for (let j = i + 1; j < this.state.moves.length; j++) {
-        if (
-          this.state.moves[j].col === this.state.moves[i].col &&
-          this.state.moves[j].gamePiece === this.state.moves[i].gamePiece
-        ) {
-          countInColumn += 1;
-        }
-        if (
-          this.state.moves[j].row === this.state.moves[i].row &&
-          this.state.moves[j].gamePiece === this.state.moves[i].gamePiece
-        ) {
-          countInRow += 1;
-        }
-      }
-      if (
-        countInRow === 3 ||
-        countInColumn === 3 ||
-        topLeftDiagonals.length === 3 ||
-        topRightDiagonals.length === 3
-      ) {
-        return true;
-      }
-    }
-    return false;
-  }
-  */
+  /**
+   * Determines if the tictactoe game is tied (this method occurs after checking for a win)
+   * @returns true if the game is tied, false otherwise
+   */
 
   private _gameHasTied(): boolean {
     return this.state.moves.length === 9;
@@ -221,6 +191,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    * @throws InvalidParametersError if the player is already in the game (PLAYER_ALREADY_IN_GAME_MESSAGE)
    *  or the game is full (GAME_FULL_MESSAGE)
    */
+
   public _join(player: Player): void {
     if (this._players.indexOf(player) !== -1) {
       throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
@@ -247,6 +218,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    * @param player The player to remove from the game
    * @throws InvalidParametersError if the player is not in the game (PLAYER_NOT_IN_GAME_MESSAGE)
    */
+
   protected _leave(player: Player): void {
     if (this._players.indexOf(player) === -1) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
