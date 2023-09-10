@@ -51,7 +51,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
       move.move.gamePiece = 'O';
     }
 
-    if (this._moveIsValid(move.move)) {
+    if (this._moveIsValid(move)) {
       this.state.moves = this.state.moves.concat(move.move);
       if (this._playerHasWon(move)) {
         this.state.status = 'OVER';
@@ -70,24 +70,24 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    * @returns true if the move is valid
    */
 
-  private _moveIsValid(move: TicTacToeMove): boolean {
+  private _moveIsValid(move: GameMove<TicTacToeMove>): boolean {
     if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
 
     this.state.moves.forEach(m => {
-      if (m.col === move.col && m.row === move.row) {
+      if (m.col === move.move.col && m.row === move.move.row) {
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
       }
     });
 
-    if (this.state.moves.length === 0 && move.gamePiece === 'O') {
+    if (this.state.moves.length === 0 && move.move.gamePiece === 'O') {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
 
     if (
       this.state.moves.length > 0 &&
-      move.gamePiece === this.state.moves[this.state.moves.length - 1].gamePiece
+      move.move.gamePiece === this.state.moves[this.state.moves.length - 1].gamePiece
     ) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }

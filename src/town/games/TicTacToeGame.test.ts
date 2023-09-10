@@ -44,6 +44,18 @@ describe('TicTacToeGame', () => {
         expect(game.state.winner).toBeUndefined();
         expect(game.state.status === 'IN_PROGRESS');
       });
+      describe('if the game status is over', () => {
+        it('should add the player as normal', () => {
+          const player1 = createPlayerForTesting();
+          const player2 = createPlayerForTesting();
+          const player3 = createPlayerForTesting();
+          game.join(player1);
+          game.join(player2);
+          game.leave(player1);
+          game.join(player3);
+          expect(1).toBe(2);
+        });
+      });
     });
     describe('When the player cannot be added', () => {
       it('makes sure the same player cannot join the game twice', () => {
@@ -380,9 +392,6 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(1);
             expect(game.state.status).toEqual('IN_PROGRESS');
           });
-        });
-        describe('when the move is out of bounds', () => {
-          // not yet
         });
         describe('when the space is occupied', () => {
           it('should throw an error', () => {
