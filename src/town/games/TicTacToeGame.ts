@@ -188,15 +188,13 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
       throw new InvalidParametersError(PLAYER_ALREADY_IN_GAME_MESSAGE);
     } else if (this._players.length === 2) {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
-    } else if (this._players.length === 1) {
-      if (this._players[0].id === this.state.x) {
-        this.state.o = player.id;
-      } else {
+    } else if (this._players.length < 2) {
+      if (this._players.length === 0) {
         this.state.x = player.id;
+      } else if (this._players.length === 1) {
+        this.state.o = player.id;
+        this.state.status = 'IN_PROGRESS';
       }
-      this.state.status = 'IN_PROGRESS';
-    } else if (this._players.length === 0) {
-      this.state.x = player.id;
     }
   }
 
@@ -216,12 +214,17 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     if (this._players.indexOf(player) === -1) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
-    if (this.state.status === 'IN_PROGRESS') {
+    if (this._players.length === 2) {
       this.state.status = 'OVER';
       this.state.winner =
         this._players[0].id === player.id ? this._players[1].id : this._players[0].id;
     } else {
       this.state.status = 'WAITING_TO_START';
+      if (this.state.x === player.id) {
+        this.state.x = undefined;
+      } else {
+        this.state.o = undefined;
+      }
     }
   }
 }

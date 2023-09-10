@@ -118,7 +118,7 @@ describe('TicTacToeGame', () => {
             game.leave(player);
 
             expect(game.state.status).toEqual('WAITING_TO_START');
-            expect(game.state.x).toEqual(player.id);
+            expect(game.state.x).toBeUndefined();
           });
           test('when someone has won the game', () => {
             const player1 = createPlayerForTesting();
@@ -147,7 +147,7 @@ describe('TicTacToeGame', () => {
 
             game.leave(player2);
 
-            expect(game.state.status).toEqual('WAITING_TO_START');
+            expect(game.state.status).toEqual('OVER');
           });
         });
       });
