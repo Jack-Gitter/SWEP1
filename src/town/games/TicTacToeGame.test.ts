@@ -290,21 +290,23 @@ describe('TicTacToeGame', () => {
             expect(game.state.winner).toEqual(player1.id);
           });
           it('should check for diag 2 win', () => {
-            const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
-            const move2: TicTacToeMove = { row: 1, col: 2, gamePiece: 'O' };
-            const move3: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
-            const move4: TicTacToeMove = { row: 2, col: 1, gamePiece: 'O' };
-            const move5: TicTacToeMove = { row: 2, col: 0, gamePiece: 'X' };
+            const move1: TicTacToeMove = { row: 2, col: 1, gamePiece: 'X' };
+            const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
+            const move3: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
+            const move4: TicTacToeMove = { row: 1, col: 1, gamePiece: 'O' };
+            const move5: TicTacToeMove = { row: 1, col: 2, gamePiece: 'X' };
+            const move6: TicTacToeMove = { row: 2, col: 0, gamePiece: 'O' };
 
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(5);
+            expect(game.state.moves).toHaveLength(6);
             expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
+            expect(game.state.winner).toEqual(player2.id);
           });
           it('should check for a tie', () => {
             const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
