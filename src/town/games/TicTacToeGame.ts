@@ -22,7 +22,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     });
   }
 
-  /*
+  /**
    * Applies a player's move to the game.
    * Uses the player's ID to determine which game piece they are using (ignores move.gamePiece)
    * Validates the move before applying it. If the move is invalid, throws an InvalidParametersError with
@@ -41,63 +41,157 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    *
    * @param move The move to apply to the game
    * @throws InvalidParametersError if the move is invalid (with specific message noted above)
+   * */
+
+  public applyMove(move: GameMove<TicTacToeMove>): void {
+    if (this.state.x === move.playerID) {
+      move.move.gamePiece = 'X';
+    } else {
+      move.move.gamePiece = 'O';
+    }
+
+    if (this._moveIsValid(move.move)) {
+      this.state.moves = this.state.moves.concat(move.move);
+      if (this._playerHasWon(move)) {
+        this.state.status = 'OVER';
+        this.state.winner = move.playerID;
+      } else if (this._gameHasTied()) {
+        this.state.status = 'OVER';
+        this.state.winner = undefined;
+      }
+    }
+  }
+
+  /**
+   * Ensures that a move is valid based on the current game state
+   * @param move The move to apply to the gamk
+   * @throws InvalidParametersError if the move is invalid (specified by the applyMove method)
+   * @returns true if the move is valid
    */
-  private _moveIsValid(move: TicTacToeMove, moves: ReadonlyArray<TicTacToeMove>): boolean {
-    // check for game is not in progress
+  private _moveIsValid(move: TicTacToeMove): boolean {
     if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
-    // check for space not occupied
-    moves.forEach(m => {
+
+    this.state.moves.forEach(m => {
       if (m.col === move.col && m.row === move.row) {
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
       }
     });
-    // check for move not players turn
+
     if (this.state.moves.length === 0 && move.gamePiece === 'O') {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
+
     if (
       this.state.moves.length > 0 &&
       move.gamePiece === this.state.moves[this.state.moves.length - 1].gamePiece
     ) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
+
     return true;
   }
 
-  private _playerHasWon(moves: ReadonlyArray<TicTacToeMove>): boolean {
+  /**
+   * Determines if a player has won based on the moves that have occured in the game
+   * @returns
+   */
+
+  private _playerHasWon(move: GameMove<TicTacToeMove>): boolean {
+    return (
+      this._checkForHorizontalWins(move) ||
+      this._checkForVerticalWins(move) ||
+      this._checkForDiagonalWins(move)
+    );
+  }
+
+  private _checkForDiagonalWins(move: GameMove<TicTacToeMove>): boolean {
+    const diagonals: string[][] = [[], []];
+    for (let i = 0; i < this.state.moves.length; i++) {
+      if (this.state.moves[i].gamePiece === move.move.gamePiece) {
+        if (this.state.moves[i].col === this.state.moves[i].row) {
+          diagonals[0].push(move.move.gamePiece);
+          if (diagonals[0].length === 3) {
+            return true;
+          }
+        }
+        if (this.state.moves[i].col + this.state.moves[i].row === 2) {
+          diagonals[1].push(move.move.gamePiece);
+          if (diagonals[1].length === 3) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  private _checkForVerticalWins(move: GameMove<TicTacToeMove>) {
+    const ticTacToeBoard: string[][] = [[], [], []];
+    for (let i = 0; i < this.state.moves.length; i++) {
+      if (this.state.moves[i].gamePiece === move.move.gamePiece) {
+        ticTacToeBoard[this.state.moves[i].col].push(move.move.gamePiece);
+      }
+      if (ticTacToeBoard[this.state.moves[i].col].length === 3) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private _checkForHorizontalWins(move: GameMove<TicTacToeMove>): boolean {
+    const ticTacToeBoard: string[][] = [[], [], []];
+    for (let i = 0; i < this.state.moves.length; i++) {
+      if (this.state.moves[i].gamePiece === move.move.gamePiece) {
+        ticTacToeBoard[this.state.moves[i].row].push(move.move.gamePiece);
+      }
+      if (ticTacToeBoard[this.state.moves[i].row].length === 3) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /* private _playerHasWon(): boolean {
     // check horizontal and vertical wins
     let topLeftDiagonals = [];
     let topRightDiagonals = [];
-    for (let i = 0; i < moves.length; i++) {
+    for (let i = 0; i < this.state.moves.length; i++) {
       let countInRow = 1;
       let countInColumn = 1;
-      if (moves[i].col === moves[i].row) {
+      _checkDiagonals(i, topLeftDiagonals, topRightDiagonals)
+      if (this.state.moves[i].col === this.state.moves[i].row) {
         if (
           topLeftDiagonals.length > 0 &&
-          topLeftDiagonals[topLeftDiagonals.length - 1] !== moves[i].gamePiece
+          topLeftDiagonals[topLeftDiagonals.length - 1] !== this.state.moves[i].gamePiece
         ) {
           topLeftDiagonals = [];
         } else {
-          topLeftDiagonals.push(moves[i].gamePiece);
+          topLeftDiagonals.push(this.state.moves[i].gamePiece);
         }
       }
-      if (moves[i].col + moves[i].row === 2) {
+      if (this.state.moves[i].col + this.state.moves[i].row === 2) {
         if (
           topRightDiagonals.length > 0 &&
-          topRightDiagonals[topRightDiagonals.length - 1] !== moves[i].gamePiece
+          topRightDiagonals[topRightDiagonals.length - 1] !== this.state.moves[i].gamePiece
         ) {
           topRightDiagonals = [];
         } else {
-          topRightDiagonals.push(moves[i].gamePiece);
+          topRightDiagonals.push(this.state.moves[i].gamePiece);
         }
       }
-      for (let j = i + 1; j < moves.length; j++) {
-        if (moves[j].col === moves[i].col && moves[j].gamePiece === moves[i].gamePiece) {
+      for (let j = i + 1; j < this.state.moves.length; j++) {
+        if (
+          this.state.moves[j].col === this.state.moves[i].col &&
+          this.state.moves[j].gamePiece === this.state.moves[i].gamePiece
+        ) {
           countInColumn += 1;
         }
-        if (moves[j].row === moves[i].row && moves[j].gamePiece === moves[i].gamePiece) {
+        if (
+          this.state.moves[j].row === this.state.moves[i].row &&
+          this.state.moves[j].gamePiece === this.state.moves[i].gamePiece
+        ) {
           countInRow += 1;
         }
       }
@@ -110,33 +204,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
         return true;
       }
     }
-    // check diagonal wins
     return false;
   }
+  */
 
-  private _gameHasTied(moves: ReadonlyArray<TicTacToeMove>): boolean {
-    return moves.length === 9;
-  }
-
-  public applyMove(move: GameMove<TicTacToeMove>): void {
-    // Assign the correct game piece to the player
-    if (this.state.x === move.playerID) {
-      move.move.gamePiece = 'X';
-    } else {
-      move.move.gamePiece = 'O';
-    }
-
-    // Check for valid moves and wins
-    if (this._moveIsValid(move.move, this.state.moves)) {
-      this.state.moves = this.state.moves.concat(move.move);
-      if (this._playerHasWon(this.state.moves)) {
-        this.state.status = 'OVER';
-        this.state.winner = move.playerID;
-      } else if (this._gameHasTied(this.state.moves)) {
-        this.state.status = 'OVER';
-        this.state.winner = undefined;
-      }
-    }
+  private _gameHasTied(): boolean {
+    return this.state.moves.length === 9;
   }
 
   /**
