@@ -50,7 +50,6 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     } else {
       move.move.gamePiece = 'O';
     }
-
     if (this._moveIsValid(move)) {
       this.state.moves = this.state.moves.concat(move.move);
       if (this._playerHasWon(move)) {
@@ -74,24 +73,20 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
-
     this.state.moves.forEach(m => {
       if (m.col === move.move.col && m.row === move.move.row) {
         throw new InvalidParametersError(BOARD_POSITION_NOT_EMPTY_MESSAGE);
       }
     });
-
     if (this.state.moves.length === 0 && move.move.gamePiece === 'O') {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
-
     if (
       this.state.moves.length > 0 &&
       move.move.gamePiece === this.state.moves[this.state.moves.length - 1].gamePiece
     ) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
-
     return true;
   }
 

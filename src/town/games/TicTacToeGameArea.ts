@@ -1,8 +1,19 @@
+import InvalidParametersError, {
+  GAME_ID_MISSMATCH_MESSAGE,
+  GAME_NOT_IN_PROGRESS_MESSAGE,
+  INVALID_COMMAND_MESSAGE,
+} from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
 import {
+  GameMoveCommand,
+  GameResult,
   InteractableCommand,
   InteractableCommandReturnType,
   InteractableType,
+  JoinGameCommand,
+  LeaveGameCommand,
+  TicTacToeMove,
+  GameMove,
 } from '../../types/CoveyTownSocket';
 import GameArea from './GameArea';
 import TicTacToeGame from './TicTacToeGame';
@@ -39,10 +50,92 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
    *        or gameID does not match the game in progress (GAME_ID_MISSMATCH_MESSAGE)
    *  - Any command besides LeaveGame, GameMove and JoinGame: INVALID_COMMAND_MESSAGE
    */
+  private _handleJoinCommand(player: Player): InteractableCommandReturnType<JoinGameCommand> {
+    if (!this._game) {
+      this._game = new TicTacToeGame();
+    }
+    this._game.join(player);
+    this._emitAreaChanged();
+    return { gameID: this._game.id } as InteractableCommandReturnType<JoinGameCommand>;
+  }
+
+  private _handleLeaveCommand(
+    command: LeaveGameCommand,
+    player: Player,
+  ): InteractableCommandReturnType<LeaveGameCommand> {
+    if (!this._game) {
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+    }
+    if (command.gameID !== this._game.id) {
+      throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
+    }
+    this.remove(player);
+    this._emitAreaChanged();
+    if (this._game.state.winner !== undefined) {
+      const playersOfGame = this._game.toModel().players;
+      const result: GameResult = {
+        gameID: this._game.id,
+        scores: {
+          []: 1,
+          [player.userName]: 0,
+        },
+      };
+      this.history.push(result);
+      this._emitAreaChanged();
+    }
+    return undefined as InteractableCommandReturnType<LeaveGameCommand>;
+  }
+
+  private _handleMoveCommand(
+    command: GameMoveCommand<TicTacToeMove>,
+    player: Player,
+  ): InteractableCommandReturnType<GameMoveCommand<TicTacToeMove>> {
+    if (!this._game) {
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+    }
+    if (this._game.id === command.gameID) {
+      throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
+    }
+    const gameMove: GameMove<TicTacToeMove> = {
+      playerID: player.id,
+      gameID: command.gameID,
+      move: command.move,
+    };
+
+    this._game.applyMove(gameMove);
+    this._emitAreaChanged();
+    if (this._game.state.winner !== undefined) {
+      const playersOfGame = this._game.toModel().players;
+      const result: GameResult = {
+        gameID: this._game.id,
+        scores: {
+          [player.userName]: 1,
+          []: 0,
+        },
+      };      
+    }
+
+    return undefined as InteractableCommandReturnType<GameMoveCommand<TicTacToeMove>>;
+  }
+
   public handleCommand<CommandType extends InteractableCommand>(
     command: CommandType,
     player: Player,
   ): InteractableCommandReturnType<CommandType> {
-    throw new Error('Unimplemented - remove this once you start to implement this method');
+    if ('update' in command) {
+      throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
+    } else if (command.type === 'JoinGame') {
+      return this._handleJoinCommand(player) as InteractableCommandReturnType<CommandType>;
+    } else if (command.type === 'LeaveGame') {
+      return this._handleLeaveCommand(
+        command,
+        player,
+      ) as InteractableCommandReturnType<CommandType>;
+    } else if (command.type === 'GameMove') {
+      // chill
+    }
+
+    return undefined as InteractableCommandReturnType<CommandType>;
+    // throw new Error('Unimplemented - remove this once you start to implement this method');
   }
 }
