@@ -372,6 +372,32 @@ describe('TicTacToeGame', () => {
           player2 = createPlayerForTesting();
           game.join(player1);
         });
+        it('should not change whos turn it is', () => {
+          game.join(player2);
+          const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(InvalidParametersError);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(InvalidParametersError);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+        });
+        it('should use playerID to determine whos turn it is', () => {
+          game.join(player2);
+          const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(InvalidParametersError);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+        });
         describe('when the same player goes twice with the same piece', () => {
           it('should throw an error', () => {
             game.join(player2);
@@ -428,6 +454,28 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(1);
             expect(game.state.status).toEqual('IN_PROGRESS');
           });
+          it('should ensure that the same player can go after the invalid move', () => {
+            game.join(player2);
+            const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
+            const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
+            const move3: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
+
+            expect(() =>
+              game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 }),
+            ).toThrow(InvalidParametersError);
+            expect(() =>
+              game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 }),
+            ).toThrow(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+            expect(game.state.moves).toHaveLength(1);
+            expect(game.state.status).toEqual('IN_PROGRESS');
+            expect(() =>
+              game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 }),
+            ).toThrow(InvalidParametersError);
+            expect(() =>
+              game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 }),
+            ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+          });
         });
         describe('when the game is not in progress (over status)', () => {
           it('should throw an error', () => {
@@ -459,6 +507,15 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(0);
             expect(game.state.status).toEqual('WAITING_TO_START');
           });
+        });
+        it('should throw an error if the move is not valid', () => {
+          const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
+          ).toThrow(InvalidParametersError);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
+          ).toThrow(GAME_NOT_IN_PROGRESS_MESSAGE);
         });
       });
     });
