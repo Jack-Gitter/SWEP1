@@ -429,6 +429,8 @@ describe('TicTacToeGame', () => {
 
           expect(game.state.status === 'IN_PROGRESS');
           expect(game.state.moves).toHaveLength(1);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
         });
         it('should not change whos turn it is (space occupied move)', () => {
           game.join(player2);
@@ -462,6 +464,8 @@ describe('TicTacToeGame', () => {
 
           expect(game.state.status === 'IN_PROGRESS');
           expect(game.state.moves).toHaveLength(1);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
         });
         it('should not change whos turn it is (incorrect playerID move)', () => {
           game.join(player2);
@@ -484,6 +488,8 @@ describe('TicTacToeGame', () => {
 
           expect(game.state.status === 'IN_PROGRESS');
           expect(game.state.moves).toHaveLength(1);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
         });
         it('should use playerID to determine whos turn it is', () => {
           game.join(player2);
@@ -524,6 +530,8 @@ describe('TicTacToeGame', () => {
           ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
           expect(game.state.moves).toHaveLength(1);
           expect(game.state.status).toEqual('IN_PROGRESS');
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
         });
         it('should check that the space is occupied', () => {
           game.join(player2);
