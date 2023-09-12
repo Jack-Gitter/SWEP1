@@ -50,6 +50,32 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
    *        or gameID does not match the game in progress (GAME_ID_MISSMATCH_MESSAGE)
    *  - Any command besides LeaveGame, GameMove and JoinGame: INVALID_COMMAND_MESSAGE
    */
+  public handleCommand<CommandType extends InteractableCommand>(
+    command: CommandType,
+    player: Player,
+  ): InteractableCommandReturnType<CommandType> {
+    if (command.type === 'JoinGame') {
+      return this._handleJoinCommand(player) as InteractableCommandReturnType<CommandType>;
+    }
+    if (command.type === 'LeaveGame') {
+      return this._handleLeaveCommand(
+        command,
+        player,
+      ) as InteractableCommandReturnType<CommandType>;
+    }
+    if (command.type === 'GameMove') {
+      return this._handleMoveCommand(command, player) as InteractableCommandReturnType<CommandType>;
+    }
+    throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
+  }
+
+  /**
+   * Handles a join command from the player
+   * If no games currently exists, creates one and adds the player
+   * If a game does exist, adds the player and calls this._emitAreaChanged()
+   * @param player player making the request
+   * @returns InteractableCommandReturnType<JoinGameCommand> as specified by calling function
+   */
   private _handleJoinCommand(player: Player): InteractableCommandReturnType<JoinGameCommand> {
     if (!this._game) {
       this._game = new TicTacToeGame();
@@ -59,6 +85,15 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
     return { gameID: this._game.id } as InteractableCommandReturnType<JoinGameCommand>;
   }
 
+  /**
+   * Handles a leave command from the player
+   *    If a game is not in progress or the gameID does not match the current game, throws error
+   *    If a player successfully leaves the game, checks if it is over or not and updates
+   *      game history accordingly
+   * @param command the LeaveGameCommand
+   * @param player player making the request
+   * @returns InteractableCommandReturnType<HandleLeaveCommand> as specified by calling function
+   */
   private _handleLeaveCommand(
     command: LeaveGameCommand,
     player: Player,
@@ -75,10 +110,10 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
       const result: GameResult = {
         gameID: this._game.id,
         scores: {
-          [this.occupants[0].userName !== player.userName
-            ? this.occupants[0].userName
-            : this.occupants[1].userName]: 1,
-          [player.userName]: 0,
+          [player.userName]: 1,
+          [this._occupants[0].id !== player.id
+            ? this._occupants[0].userName
+            : this._occupants[1].userName]: 0,
         },
       };
       this.history.push(result);
@@ -86,6 +121,17 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
     return undefined as InteractableCommandReturnType<LeaveGameCommand>;
   }
 
+  /**
+   * Handles a move command issued by the player
+   * If there is not a current game or game ID does not match the one given throws an error
+   * If the game move is invalid throws an error
+   * Otherwise applies a move to the game
+   * If a winner is found, updates the history
+   * @param command the GameMoveCommand<TicTacToeMove> issued
+   * @param player the player making the request
+   * @returns InteractableCommandReturnType<GameMoveCommand<TicTacToeMove>>
+   * as specified by calling function
+   */
   private _handleMoveCommand(
     command: GameMoveCommand<TicTacToeMove>,
     player: Player,
@@ -127,24 +173,5 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
       this._history.push(result);
     }
     return undefined as InteractableCommandReturnType<GameMoveCommand<TicTacToeMove>>;
-  }
-
-  public handleCommand<CommandType extends InteractableCommand>(
-    command: CommandType,
-    player: Player,
-  ): InteractableCommandReturnType<CommandType> {
-    if (command.type === 'JoinGame') {
-      return this._handleJoinCommand(player) as InteractableCommandReturnType<CommandType>;
-    }
-    if (command.type === 'LeaveGame') {
-      return this._handleLeaveCommand(
-        command,
-        player,
-      ) as InteractableCommandReturnType<CommandType>;
-    }
-    if (command.type === 'GameMove') {
-      return this._handleMoveCommand(command, player) as InteractableCommandReturnType<CommandType>;
-    }
-    throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
   }
 }
