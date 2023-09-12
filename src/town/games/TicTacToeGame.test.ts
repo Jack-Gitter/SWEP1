@@ -84,7 +84,7 @@ describe('TicTacToeGame', () => {
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player2.id);
             expect(game.state.moves).toHaveLength(0);
-            expect(game.state.x).toEqual(player1.id); // this is intentional???
+            expect(game.state.x).toEqual(player1.id);
             expect(game.state.o).toEqual(player2.id);
           });
           test('when o leaves', () => {
@@ -193,6 +193,8 @@ describe('TicTacToeGame', () => {
           expect(game.state.moves).toHaveLength(1);
           expect(game.state.moves[0]).toEqual(move);
           expect(game.state.status).toEqual('IN_PROGRESS');
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
         });
         describe('that is a winning move', () => {
           it('should check for row 0 win', () => {
@@ -211,6 +213,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(5);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player1.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for row 1 win', () => {
             const move1: TicTacToeMove = { row: 1, col: 0, gamePiece: 'X' };
@@ -228,6 +232,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(5);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player1.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for row 2 win', () => {
             const move1: TicTacToeMove = { row: 1, col: 0, gamePiece: 'X' };
@@ -247,6 +253,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(6);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player2.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for col 0 win', () => {
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
@@ -264,6 +272,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(5);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player1.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for col 1 win', () => {
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
@@ -283,6 +293,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(6);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player2.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for col 2 win', () => {
             const move1: TicTacToeMove = { row: 2, col: 2, gamePiece: 'X' };
@@ -300,6 +312,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(5);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player1.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for diag 1 win', () => {
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
@@ -317,6 +331,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(5);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player1.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for diag 2 win', () => {
             const move1: TicTacToeMove = { row: 2, col: 1, gamePiece: 'X' };
@@ -336,6 +352,8 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(6);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(player2.id);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
           it('should check for a tie', () => {
             const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
@@ -361,10 +379,12 @@ describe('TicTacToeGame', () => {
             expect(game.state.moves).toHaveLength(9);
             expect(game.state.status).toEqual('OVER');
             expect(game.state.winner).toEqual(undefined);
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
         });
       });
-      describe('when it is an invalid move', () => {
+      describe('when given an invalid move', () => {
         let player1: Player;
         let player2: Player;
         beforeEach(() => {
@@ -372,8 +392,28 @@ describe('TicTacToeGame', () => {
           player2 = createPlayerForTesting();
           game.join(player1);
         });
-        it('should not change whos turn it is', () => {
+        test('if the player is not in the game', () => {
+          const player3 = createPlayerForTesting();
+
           game.join(player2);
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
+
+          const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player3.id, move: move1 }),
+          ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+        });
+        it('should not change whos turn it is (out of turn move)', () => {
+          game.join(player2);
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
           const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
@@ -390,8 +430,68 @@ describe('TicTacToeGame', () => {
           expect(game.state.status === 'IN_PROGRESS');
           expect(game.state.moves).toHaveLength(1);
         });
+        it('should not change whos turn it is (space occupied move)', () => {
+          game.join(player2);
+
+          const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
+          const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
+          const move3: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
+
+          game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
+
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 }),
+          ).toThrow(InvalidParametersError);
+
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move2 }),
+          ).toThrow(BOARD_POSITION_NOT_EMPTY_MESSAGE);
+
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 }),
+          ).toThrow(InvalidParametersError);
+
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 }),
+          ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(1);
+        });
+        it('should not change whos turn it is (incorrect playerID move)', () => {
+          game.join(player2);
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
+
+          const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
+
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(InvalidParametersError);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move1 }),
+          ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+
+          game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(1);
+        });
         it('should use playerID to determine whos turn it is', () => {
           game.join(player2);
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
 
@@ -405,6 +505,11 @@ describe('TicTacToeGame', () => {
         });
         it('should stop a player from going twice in a row', () => {
           game.join(player2);
+
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
@@ -423,6 +528,11 @@ describe('TicTacToeGame', () => {
         it('should check that the space is occupied', () => {
           game.join(player2);
 
+          expect(game.state.status === 'IN_PROGRESS');
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
+
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
 
@@ -437,6 +547,8 @@ describe('TicTacToeGame', () => {
 
           expect(game.state.moves).toHaveLength(1);
           expect(game.state.status).toEqual('IN_PROGRESS');
+          expect(game.state.x).toBe(player1.id);
+          expect(game.state.o).toBe(player2.id);
         });
         describe('when the game is not in progress (over status)', () => {
           it('should throw an error', () => {
@@ -451,8 +563,11 @@ describe('TicTacToeGame', () => {
             expect(() =>
               game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
             ).toThrow(GAME_NOT_IN_PROGRESS_MESSAGE);
+
             expect(game.state.moves).toHaveLength(0);
             expect(game.state.status).toEqual('OVER');
+            expect(game.state.x).toBe(player1.id);
+            expect(game.state.o).toBe(player2.id);
           });
         });
         describe('when the game is not in progress (waiting status)', () => {
@@ -465,18 +580,11 @@ describe('TicTacToeGame', () => {
             expect(() =>
               game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
             ).toThrow(GAME_NOT_IN_PROGRESS_MESSAGE);
+
             expect(game.state.moves).toHaveLength(0);
             expect(game.state.status).toEqual('WAITING_TO_START');
+            expect(game.state.x).toBe(player1.id);
           });
-        });
-        it('should throw an error if the move is not valid', () => {
-          const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
-          expect(() =>
-            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
-          ).toThrow(InvalidParametersError);
-          expect(() =>
-            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
-          ).toThrow(GAME_NOT_IN_PROGRESS_MESSAGE);
         });
       });
     });
