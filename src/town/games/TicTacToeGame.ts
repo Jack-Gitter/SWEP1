@@ -64,7 +64,7 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
 
   /**
    * Ensures that a move is valid based on the current game state
-   * @param move The move to apply to the gamk
+   * @param move The move to apply to the game
    * @throws InvalidParametersError if the move is invalid (specified by the applyMove method)
    * @returns true if the move is valid
    */
@@ -91,10 +91,10 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
   }
 
   /**
-   * Determines if a player has won based on the moves that have occured in the game
-   * @returns true if a player has won the current game, false otherwise
+   * Determines if anyone has won the most recent game given the most recent move
+   * @param move the most recent move made in the game
+   * @returns True if the player has won, false otherwise
    */
-
   private _playerHasWon(move: GameMove<TicTacToeMove>): boolean {
     return (
       this._checkForHorizontalWins(move) ||
@@ -137,12 +137,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    */
 
   private _checkForVerticalWins(move: GameMove<TicTacToeMove>) {
-    const ticTacToeBoard: string[][] = [[], [], []];
+    const ticTacToeBoardColumns: string[][] = [[], [], []];
     for (let i = 0; i < this.state.moves.length; i++) {
       if (this.state.moves[i].gamePiece === move.move.gamePiece) {
-        ticTacToeBoard[this.state.moves[i].col].push(move.move.gamePiece);
+        ticTacToeBoardColumns[this.state.moves[i].col].push(move.move.gamePiece);
       }
-      if (ticTacToeBoard[this.state.moves[i].col].length === 3) {
+      if (ticTacToeBoardColumns[this.state.moves[i].col].length === 3) {
         return true;
       }
     }
@@ -156,12 +156,12 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    */
 
   private _checkForHorizontalWins(move: GameMove<TicTacToeMove>): boolean {
-    const ticTacToeBoard: string[][] = [[], [], []];
+    const ticTacToeBoardRows: string[][] = [[], [], []];
     for (let i = 0; i < this.state.moves.length; i++) {
       if (this.state.moves[i].gamePiece === move.move.gamePiece) {
-        ticTacToeBoard[this.state.moves[i].row].push(move.move.gamePiece);
+        ticTacToeBoardRows[this.state.moves[i].row].push(move.move.gamePiece);
       }
-      if (ticTacToeBoard[this.state.moves[i].row].length === 3) {
+      if (ticTacToeBoardRows[this.state.moves[i].row].length === 3) {
         return true;
       }
     }
