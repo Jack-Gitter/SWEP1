@@ -31,7 +31,7 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
   /**
    * Handle a command from a player in this game area.
    * Supported commands:
-   * - JoinGame (joins the game `this._game`, or creates a new one if none is in progress)
+   * - JoinGame (joins the game `this.game`, or creates a new one if none is in progress)
    * - GameMove (applies a move to the game)
    * - LeaveGame (leaves the game)
    *
@@ -98,22 +98,22 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
     command: LeaveGameCommand,
     player: Player,
   ): InteractableCommandReturnType<LeaveGameCommand> {
-    if (!this._game) {
+    if (!this.game) {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
-    if (command.gameID !== this._game.id) {
+    if (command.gameID !== this.game.id) {
       throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
     }
-    this._game.leave(player);
+    this.game.leave(player);
     this._emitAreaChanged();
-    if (this._game.state.status === 'OVER') {
+    if (this.game.state.status === 'OVER') {
       const result: GameResult = {
-        gameID: this._game.id,
+        gameID: this.game.id,
         scores: {
           [player.userName]: 1,
-          [this._occupants[0].id !== player.id
-            ? this._occupants[0].userName
-            : this._occupants[1].userName]: 0,
+          [this.occupants[0].id !== player.id
+            ? this.occupants[0].userName
+            : this.occupants[1].userName]: 0,
         },
       };
       this.history.push(result);
@@ -136,10 +136,10 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
     command: GameMoveCommand<TicTacToeMove>,
     player: Player,
   ): InteractableCommandReturnType<GameMoveCommand<TicTacToeMove>> {
-    if (!this._game) {
+    if (!this.game) {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
     }
-    if (this._game.id !== command.gameID) {
+    if (this.game.id !== command.gameID) {
       throw new InvalidParametersError(GAME_ID_MISSMATCH_MESSAGE);
     }
     const gameMove: GameMove<TicTacToeMove> = {
@@ -147,13 +147,13 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
       gameID: command.gameID,
       move: command.move,
     };
-    this._game.applyMove(gameMove);
+    this.game.applyMove(gameMove);
     this._emitAreaChanged();
-    if (this._game.state.status === 'OVER') {
-      let result: GameResult = { gameID: this._game.id, scores: {} };
-      if (this._game.state.winner !== undefined) {
+    if (this.game.state.status === 'OVER') {
+      let result: GameResult = { gameID: this.game.id, scores: {} };
+      if (this.game.state.winner !== undefined) {
         result = {
-          gameID: this._game.id,
+          gameID: this.game.id,
           scores: {
             [player.userName]: 1,
             [this.occupants[0].userName !== player.userName
@@ -163,14 +163,14 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
         };
       } else {
         result = {
-          gameID: this._game.id,
+          gameID: this.game.id,
           scores: {
             [this.occupants[0].userName]: 0,
             [this.occupants[1].userName]: 0,
           },
         };
       }
-      this._history.push(result);
+      this.history.push(result);
     }
     return undefined as InteractableCommandReturnType<GameMoveCommand<TicTacToeMove>>;
   }
