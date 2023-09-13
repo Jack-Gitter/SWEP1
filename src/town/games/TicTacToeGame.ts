@@ -210,9 +210,11 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
     if (this._players.length === 2) {
+      if (this.state.status === 'IN_PROGRESS') {
+        this.state.winner =
+          this._players[0].id === player.id ? this._players[1].id : this._players[0].id;
+      }
       this.state.status = 'OVER';
-      this.state.winner =
-        this._players[0].id === player.id ? this._players[1].id : this._players[0].id;
     } else {
       this.state.status = 'WAITING_TO_START';
       if (this.state.x === player.id) {
