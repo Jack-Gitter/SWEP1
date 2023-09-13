@@ -774,7 +774,7 @@ describe('TicTacToeGame', () => {
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
-          const move3: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
+          const move3: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
 
           game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
 
@@ -783,21 +783,16 @@ describe('TicTacToeGame', () => {
           ).toThrow(InvalidParametersError);
 
           expect(() =>
-            game.applyMove({ gameID: game.id, playerID: player1.id, move: move2 }),
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 }),
           ).toThrow(BOARD_POSITION_NOT_EMPTY_MESSAGE);
 
-          expect(() =>
-            game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 }),
-          ).toThrow(InvalidParametersError);
-
-          expect(() =>
-            game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 }),
-          ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
+          game.applyMove({ gameID: game.id, playerID: player2.id, move: move3 });
 
           expect(game.state.status === 'IN_PROGRESS');
-          expect(game.state.moves).toHaveLength(1);
+          expect(game.state.moves).toHaveLength(2);
           expect(game.state.x).toBe(player1.id);
           expect(game.state.o).toBe(player2.id);
+          expect(game.state.winner).toBeUndefined();
         });
         it('should not change whos turn it is (space occupied move o on o)', () => {
           game.join(player2);
@@ -843,6 +838,7 @@ describe('TicTacToeGame', () => {
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
           const move3: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
+          const move4: TicTacToeMove = { row: 2, col: 0, gamePiece: 'X' };
 
           game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
 
@@ -856,10 +852,13 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move3 }),
           ).toThrow(BOARD_POSITION_NOT_EMPTY_MESSAGE);
 
+          game.applyMove({ gameID: game.id, playerID: player1.id, move: move4 });
+
           expect(game.state.status === 'IN_PROGRESS');
-          expect(game.state.moves).toHaveLength(2);
+          expect(game.state.moves).toHaveLength(3);
           expect(game.state.x).toBe(player1.id);
           expect(game.state.o).toBe(player2.id);
+          expect(game.state.winner).toBeUndefined();
         });
         it('should not change whos turn it is (space occupied move x on x)', () => {
           game.join(player2);
