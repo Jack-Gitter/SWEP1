@@ -110,8 +110,10 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
       const result: GameResult = {
         gameID: this.game.id,
         scores: {
-          [player.userName]: 1,
-          [this.occupants[0].id !== player.id
+          [this.occupants[0].id === this.game.state.winner
+            ? this.occupants[0].userName
+            : this.occupants[1].userName]: 1,
+          [this.occupants[0].id !== this.game.state.winner
             ? this.occupants[0].userName
             : this.occupants[1].userName]: 0,
         },
