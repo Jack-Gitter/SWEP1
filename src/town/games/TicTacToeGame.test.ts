@@ -3,12 +3,13 @@ import InvalidParametersError, {
   BOARD_POSITION_NOT_EMPTY_MESSAGE,
   GAME_FULL_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
+  INVALID_MOVE_MESSAGE,
   MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
 } from '../../lib/InvalidParametersError';
 import Player from '../../lib/Player';
-import { TicTacToeMove } from '../../types/CoveyTownSocket';
+import { TicTacToeGridPosition, TicTacToeMove } from '../../types/CoveyTownSocket';
 import TicTacToeGame from './TicTacToeGame';
 
 describe('TicTacToeGame', () => {
@@ -919,6 +920,53 @@ describe('TicTacToeGame', () => {
           expect(game.state.x).toBe(player1.id);
           expect(game.state.o).toBe(player2.id);
           expect(game.state.winner).toBeUndefined();
+        });
+        it('should test for out of bounds move by x', () => {
+          game.join(player2);
+
+          expect(game.state.x).toEqual(player1.id);
+          expect(game.state.o).toEqual(player2.id);
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.winner).toBeUndefined();
+          expect(game.state.status).toEqual('IN_PROGRESS');
+
+          const move1: TicTacToeMove = {
+            row: 3 as unknown as TicTacToeGridPosition,
+            col: 0,
+            gamePiece: 'X',
+          };
+
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
+          ).toThrow(InvalidParametersError);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
+          ).toThrow(INVALID_MOVE_MESSAGE);
+        });
+        it('should test for out of bounds move by o', () => {
+          game.join(player2);
+
+          expect(game.state.x).toEqual(player1.id);
+          expect(game.state.o).toEqual(player2.id);
+          expect(game.state.moves).toHaveLength(0);
+          expect(game.state.winner).toBeUndefined();
+          expect(game.state.status).toEqual('IN_PROGRESS');
+
+          const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
+          const move2: TicTacToeMove = {
+            row: 3 as unknown as TicTacToeGridPosition,
+            col: 0,
+            gamePiece: 'O',
+          };
+
+          game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
+
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 }),
+          ).toThrow(InvalidParametersError);
+          expect(() =>
+            game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 }),
+          ).toThrow(INVALID_MOVE_MESSAGE);
         });
         it('should not change whos turn it is (incorrect playerID move when X tries to go with O)', () => {
           game.join(player2);
