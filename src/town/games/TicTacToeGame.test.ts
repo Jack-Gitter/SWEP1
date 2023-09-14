@@ -18,6 +18,11 @@ describe('TicTacToeGame', () => {
     game = new TicTacToeGame();
   });
 
+  /**
+   * Ensures that the game ending state is correct according to the given test
+   * @param player1 The first player in the game
+   * @param player2 The second player in the game
+   */
   function ensureInitialStateIsAsExpected(player1: Player, player2: Player): void {
     expect(game.state.x).toEqual(player1.id);
     expect(game.state.o).toEqual(player2.id);
@@ -25,12 +30,19 @@ describe('TicTacToeGame', () => {
     expect(game.state.winner).toBeUndefined();
     expect(game.state.status).toEqual('IN_PROGRESS');
   }
-  function ensurePlayerWinner(
+  /**
+   * Ensures that the game ending state is correct according to the given test
+   * @param player1 the first player in the game
+   * @param player2 the second player in the game
+   * @param winner the player who won the game
+   * @param numberOfMoves the number of moves the game was
+   */
+  function ensureEndStateIsAsExpected(
     player1: Player,
     player2: Player,
     winner: Player,
     numberOfMoves: number,
-  ) {
+  ): void {
     expect(game.state.moves).toHaveLength(numberOfMoves);
     expect(game.state.status).toEqual('OVER');
     expect(game.state.winner).toEqual(winner.id);
@@ -275,7 +287,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for row 0 win o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -294,7 +306,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for row 1 win x', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -311,7 +323,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for row 1 win o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -330,7 +342,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for row 2 win o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -349,7 +361,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for row 2 win x', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -366,7 +378,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for col 0 win x', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -383,7 +395,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for col 0 win o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -402,7 +414,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for col 1 win o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -421,7 +433,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for col 1 win x', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -437,7 +449,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for col 2 win x', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -453,7 +465,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for col 2 win o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -471,7 +483,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for diag 1 win x', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -487,7 +499,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for diag 1 win o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -505,7 +517,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for diag 2 win for o', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -523,7 +535,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            ensurePlayerWinner(player1, player2, player2, 6);
+            ensureEndStateIsAsExpected(player1, player2, player2, 6);
           });
           it('should check for diag 2 win for x', () => {
             ensureInitialStateIsAsExpected(player1, player2);
@@ -539,7 +551,7 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            ensurePlayerWinner(player1, player2, player1, 5);
+            ensureEndStateIsAsExpected(player1, player2, player1, 5);
           });
           it('should check for a tie', () => {
             ensureInitialStateIsAsExpected(player1, player2);
