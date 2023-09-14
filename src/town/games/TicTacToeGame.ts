@@ -89,9 +89,6 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     ) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
-    /* if (move.move.row < 0 || move.move.col < 0 || move.move.row > 2 || move.move.col > 2) {
-      throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
-    } */
     return true;
   }
 
