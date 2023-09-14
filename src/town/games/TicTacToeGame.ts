@@ -47,8 +47,10 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
   public applyMove(move: GameMove<TicTacToeMove>): void {
     if (this.state.x === move.playerID) {
       move.move.gamePiece = 'X';
-    } else {
+    } else if (this.state.o === move.playerID) {
       move.move.gamePiece = 'O';
+    } else {
+      throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
     if (this._moveIsValid(move)) {
       this.state.moves = this.state.moves.concat(move.move);
