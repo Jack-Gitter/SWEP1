@@ -18,6 +18,26 @@ describe('TicTacToeGame', () => {
     game = new TicTacToeGame();
   });
 
+  function ensureInitialStateIsAsExpected(player1: Player, player2: Player): void {
+    expect(game.state.x).toEqual(player1.id);
+    expect(game.state.o).toEqual(player2.id);
+    expect(game.state.moves).toHaveLength(0);
+    expect(game.state.winner).toBeUndefined();
+    expect(game.state.status).toEqual('IN_PROGRESS');
+  }
+  function ensurePlayerWinner(
+    player1: Player,
+    player2: Player,
+    winner: Player,
+    numberOfMoves: number,
+  ) {
+    expect(game.state.moves).toHaveLength(numberOfMoves);
+    expect(game.state.status).toEqual('OVER');
+    expect(game.state.winner).toEqual(winner.id);
+    expect(game.state.x).toBe(player1.id);
+    expect(game.state.o).toBe(player2.id);
+  }
+
   describe('[T1.1] _join', () => {
     describe('When the player can be added', () => {
       it('makes the first player X and initializes the state with status WAITING_TO_START', () => {
@@ -227,11 +247,7 @@ describe('TicTacToeGame', () => {
           game.join(player2);
         });
         it('[T2.1] should add the move to the game state', () => {
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move: TicTacToeMove = { row: 1, col: 2, gamePiece: 'X' };
 
@@ -245,11 +261,7 @@ describe('TicTacToeGame', () => {
         });
         describe('that is a winning move', () => {
           it('should check for row 0 win x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 2, col: 0, gamePiece: 'O' };
@@ -263,18 +275,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for row 0 win o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 0, gamePiece: 'O' };
@@ -290,18 +294,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for row 1 win x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 1, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 2, col: 0, gamePiece: 'O' };
@@ -315,18 +311,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for row 1 win o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 1, col: 0, gamePiece: 'O' };
@@ -342,18 +330,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for row 2 win o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 1, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 2, col: 0, gamePiece: 'O' };
@@ -369,18 +349,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for row 2 win x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 2, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 1, col: 0, gamePiece: 'O' };
@@ -394,18 +366,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for col 0 win x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 2, col: 2, gamePiece: 'O' };
@@ -419,18 +383,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for col 0 win o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 2, col: 1, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 0, gamePiece: 'O' };
@@ -446,18 +402,11 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for col 1 win o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
+
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
@@ -472,18 +421,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for col 1 win x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 1, col: 2, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
@@ -496,18 +437,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for col 2 win x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 2, col: 2, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 2, col: 0, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
@@ -520,18 +453,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for col 2 win o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 2, col: 1, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
@@ -546,18 +471,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for diag 1 win x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 2, col: 0, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
@@ -570,18 +487,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for diag 1 win o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 0, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 1, col: 2, gamePiece: 'X' };
@@ -596,18 +505,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for diag 2 win for o', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 2, col: 1, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 0, col: 1, gamePiece: 'X' };
@@ -622,18 +523,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move6 });
 
-            expect(game.state.moves).toHaveLength(6);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player2.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player2, 6);
           });
           it('should check for diag 2 win for x', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
@@ -646,18 +539,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player2.id, move: move4 });
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move5 });
 
-            expect(game.state.moves).toHaveLength(5);
-            expect(game.state.status).toEqual('OVER');
-            expect(game.state.winner).toEqual(player1.id);
-            expect(game.state.x).toBe(player1.id);
-            expect(game.state.o).toBe(player2.id);
+            ensurePlayerWinner(player1, player2, player1, 5);
           });
           it('should check for a tie', () => {
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
             const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
             const move3: TicTacToeMove = { row: 1, col: 1, gamePiece: 'X' };
@@ -699,11 +584,7 @@ describe('TicTacToeGame', () => {
 
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           expect(() =>
@@ -713,11 +594,7 @@ describe('TicTacToeGame', () => {
         it('should not change whos turn it is (out of turn move by o)', () => {
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
           const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
@@ -739,11 +616,7 @@ describe('TicTacToeGame', () => {
         it('should not change whos turn it is (out of turn move by x)', () => {
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move0: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
@@ -788,11 +661,7 @@ describe('TicTacToeGame', () => {
         it('should not change whos turn it is (space occupied move o on x)', () => {
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 2, gamePiece: 'O' };
@@ -819,11 +688,7 @@ describe('TicTacToeGame', () => {
         it('should not change whos turn it is (space occupied move o on o)', () => {
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
@@ -851,11 +716,7 @@ describe('TicTacToeGame', () => {
         it('should not change whos turn it is (space occupied move x on o)', () => {
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
@@ -885,11 +746,7 @@ describe('TicTacToeGame', () => {
         it('should not change whos turn it is (space occupied move x on x)', () => {
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
           const move2: TicTacToeMove = { row: 0, col: 1, gamePiece: 'O' };
@@ -919,11 +776,7 @@ describe('TicTacToeGame', () => {
         it('should not change whos turn it is (incorrect playerID move when player2 tries to go with x)', () => {
           game.join(player2);
 
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
+          ensureInitialStateIsAsExpected(player1, player2);
 
           const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
 
@@ -974,11 +827,7 @@ describe('TicTacToeGame', () => {
           it('should throw an error when x moves`', () => {
             game.join(player2);
 
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             game.leave(player2);
 
@@ -999,11 +848,7 @@ describe('TicTacToeGame', () => {
           it('should throw an error when o moves`', () => {
             game.join(player2);
 
-            expect(game.state.x).toEqual(player1.id);
-            expect(game.state.o).toEqual(player2.id);
-            expect(game.state.moves).toHaveLength(0);
-            expect(game.state.winner).toBeUndefined();
-            expect(game.state.status).toEqual('IN_PROGRESS');
+            ensureInitialStateIsAsExpected(player1, player2);
 
             const move1: TicTacToeMove = { row: 0, col: 2, gamePiece: 'X' };
             const move2: TicTacToeMove = { row: 1, col: 2, gamePiece: 'O' };
