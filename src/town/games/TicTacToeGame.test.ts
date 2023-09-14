@@ -694,7 +694,7 @@ describe('TicTacToeGame', () => {
           player2 = createPlayerForTesting();
           game.join(player1);
         });
-        test('if the player is not in the game', () => {
+        test('if the player is not in the game and goes with x', () => {
           const player3 = createPlayerForTesting();
 
           game.join(player2);
