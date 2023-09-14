@@ -894,7 +894,7 @@ describe('TicTacToeGame', () => {
           expect(game.state.o).toBe(player2.id);
           expect(game.state.winner).toBeUndefined();
         });
-        it('should not change whos turn it is (incorrect playerID move when O tries to go with x)', () => {
+        it('should not change whos turn it is (incorrect playerID move when player2 tries to go with x)', () => {
           game.join(player2);
 
           expect(game.state.x).toEqual(player1.id);
@@ -940,8 +940,10 @@ describe('TicTacToeGame', () => {
             game.applyMove({ gameID: game.id, playerID: player1.id, move: move2 }),
           ).toThrow(MOVE_NOT_YOUR_TURN_MESSAGE);
 
+          game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 });
+
           expect(game.state.status === 'IN_PROGRESS');
-          expect(game.state.moves).toHaveLength(1);
+          expect(game.state.moves).toHaveLength(2);
           expect(game.state.x).toBe(player1.id);
           expect(game.state.o).toBe(player2.id);
           expect(game.state.winner).toBeUndefined();
