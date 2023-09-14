@@ -942,47 +942,6 @@ describe('TicTacToeGame', () => {
           expect(game.state.o).toBe(player2.id);
           expect(game.state.winner).toBeUndefined();
         });
-        /* it('should test for out of bounds move by x', () => {
-          game.join(player2);
-
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
-
-          const move1: TicTacToeMove = {
-            row: 3 as unknown as TicTacToeGridPosition,
-            col: 0,
-            gamePiece: 'X',
-          };
-
-          expect(() =>
-            game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 }),
-          ).toThrow(TypeError);
-        });
-        it('should test for out of bounds move by o', () => {
-          game.join(player2);
-
-          expect(game.state.x).toEqual(player1.id);
-          expect(game.state.o).toEqual(player2.id);
-          expect(game.state.moves).toHaveLength(0);
-          expect(game.state.winner).toBeUndefined();
-          expect(game.state.status).toEqual('IN_PROGRESS');
-
-          const move1: TicTacToeMove = { row: 0, col: 0, gamePiece: 'X' };
-          const move2: TicTacToeMove = {
-            row: 2,
-            col: -1 as unknown as TicTacToeGridPosition,
-            gamePiece: 'O',
-          };
-
-          game.applyMove({ gameID: game.id, playerID: player1.id, move: move1 });
-
-          expect(() =>
-            game.applyMove({ gameID: game.id, playerID: player2.id, move: move2 }),
-          ).toThrow(TypeError);
-        }); */
         it('should not change whos turn it is (incorrect playerID move when player1 tries to go with O)', () => {
           game.join(player2);
 
