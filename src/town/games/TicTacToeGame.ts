@@ -2,7 +2,6 @@ import InvalidParametersError, {
   BOARD_POSITION_NOT_EMPTY_MESSAGE,
   GAME_FULL_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
-  INVALID_MOVE_MESSAGE,
   MOVE_NOT_YOUR_TURN_MESSAGE,
   PLAYER_ALREADY_IN_GAME_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
@@ -90,9 +89,9 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
     ) {
       throw new InvalidParametersError(MOVE_NOT_YOUR_TURN_MESSAGE);
     }
-    if (move.move.row < 0 || move.move.col < 0 || move.move.row > 2 || move.move.col > 2) {
+    /* if (move.move.row < 0 || move.move.col < 0 || move.move.row > 2 || move.move.col > 2) {
       throw new InvalidParametersError(INVALID_MOVE_MESSAGE);
-    }
+    } */
     return true;
   }
 
