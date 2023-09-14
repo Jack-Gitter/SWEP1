@@ -112,18 +112,18 @@ export default class TicTacToeGame extends Game<TicTacToeGameState, TicTacToeMov
    */
 
   private _checkForDiagonalWins(move: GameMove<TicTacToeMove>): boolean {
-    const diagonals: string[][] = [[], []];
+    const ticTacToeBoardDiagonals: string[][] = [[], []];
     for (let i = 0; i < this.state.moves.length; i++) {
       if (this.state.moves[i].gamePiece === move.move.gamePiece) {
         if (this.state.moves[i].col === this.state.moves[i].row) {
-          diagonals[0].push(move.move.gamePiece);
-          if (diagonals[0].length === 3) {
+          ticTacToeBoardDiagonals[0].push(move.move.gamePiece);
+          if (ticTacToeBoardDiagonals[0].length === 3) {
             return true;
           }
         }
         if (this.state.moves[i].col + this.state.moves[i].row === 2) {
-          diagonals[1].push(move.move.gamePiece);
-          if (diagonals[1].length === 3) {
+          ticTacToeBoardDiagonals[1].push(move.move.gamePiece);
+          if (ticTacToeBoardDiagonals[1].length === 3) {
             return true;
           }
         }
