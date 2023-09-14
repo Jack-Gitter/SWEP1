@@ -19,11 +19,12 @@ describe('TicTacToeGame', () => {
   });
 
   /**
-   * Ensures that the game ending state is correct according to the given test
-   * @param player1 the first player in the game
-   * @param player2 the second player in the game
-   * @param winner the player who won the game
-   * @param numberOfMoves the number of moves the game was
+   * helps to run expects against the expected state of the game
+   * @param player1 the expected player for x
+   * @param player2 the expected player for o
+   * @param winner the expected winner
+   * @param numberOfMoves the expected number of moves
+   * @param status the expected status
    */
   function ensureStateIsAsExpected(
     player1: Player | undefined,
